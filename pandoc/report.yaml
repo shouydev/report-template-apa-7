@@ -1,0 +1,22 @@
+from: markdown
+standalone: true
+toc: false
+toc-depth: 4
+number-sections: true
+citeproc: true
+template: pandoc/template/eisvogel.tex
+pdf-engine: lualatex
+
+resource-path:
+  - .
+  - report
+  - report/assets
+
+variables:
+  graphics: true
+  multirow: true
+
+bibliography:
+  - report/bibliography/references.bib
+
+csl: pandoc/csl/apa-7.csl
