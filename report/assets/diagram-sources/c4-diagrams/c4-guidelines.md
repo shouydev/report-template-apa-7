@@ -46,7 +46,7 @@ Escribir código a ciegas es ineficiente. Para ver tu diagrama actualizarse en *
 
 Abre tu terminal en la raíz del proyecto y ejecuta:
 ```bash
-docker run -it --rm -p 8080:8080 -v "$PWD/report/assets/diagram-sources/c4:/usr/local/structurizr" structurizr/lite
+docker run -it --rm -p 8080:8080 -v "$PWD/report/assets/diagram-sources/c4-diagrams:/usr/local/structurizr" structurizr/lite
 ```
 Luego, abre tu navegador en **http://localhost:8080**.
 
