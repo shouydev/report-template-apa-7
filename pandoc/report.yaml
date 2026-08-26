@@ -7,6 +7,11 @@ citeproc: true
 template: pandoc/template/eisvogel.tex
 pdf-engine: lualatex
 
+geometry:
+  - margin=1in
+linestretch: 1.5
+indent: true
+
 resource-path:
   - .
   - report
@@ -15,6 +20,32 @@ resource-path:
 variables:
   graphics: true
   multirow: true
+  disable-header-and-footer: true
+
+header-includes:
+  - |
+    % Viudas y huérfanas
+    \clubpenalty=10000
+    \widowpenalty=10000
+    \displaywidowpenalty=10000
+  - |
+    % Sangría de 0.5 pulgadas
+    \setlength{\parindent}{0.5in}
+  - |
+    % Alineación a la izquierda
+    \AtBeginDocument{\raggedright}
+  - |
+    % Numeración arriba a la derecha (APA 7)
+    \usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyhead[R]{\thepage}
+    \fancypagestyle{plain}{
+      \fancyhf{}
+      \renewcommand{\headrulewidth}{0pt}
+      \fancyhead[R]{\thepage}
+    }
 
 bibliography:
   - report/bibliography/references.bib
