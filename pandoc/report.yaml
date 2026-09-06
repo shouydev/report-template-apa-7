@@ -3,7 +3,6 @@ standalone: true
 toc: false
 toc-depth: 4
 number-sections: false
-citeproc: true
 template: pandoc/template/eisvogel.tex
 pdf-engine: lualatex
 
@@ -14,15 +13,17 @@ resource-path:
 
 metadata:
   lang: es-ES
-  figureTitle: "Figura"
-  tableTitle: "Tabla"
-  figPrefix: "Figura"
-  tblPrefix: "Tabla"
+  figureTitle: 'Figura'
+  tableTitle: 'Tabla'
+  figPrefix: 'Figura'
+  tblPrefix: 'Tabla'
 
 variables:
   graphics: true
   multirow: true
   disable-header-and-footer: true
+  block-headings: true
+  tables: true
   geometry:
     - margin=1in
   linestretch: 1.5
@@ -30,18 +31,18 @@ variables:
 
   header-includes:
     - |
-      % Viudas y huérfanas
+      % Widows and orphans
       \clubpenalty=10000
       \widowpenalty=10000
       \displaywidowpenalty=10000
     - |
-      % Sangría de 0.5 pulgadas
+      % 0.5-inch first-line indent
       \setlength{\parindent}{0.5in}
     - |
-      % Alineación a la izquierda
+      % Left alignment
       \AtBeginDocument{\raggedright}
     - |
-      % Numeración arriba a la derecha (APA 7)
+      % Page numbers top right (APA 7)
       \usepackage{fancyhdr}
       \pagestyle{fancy}
       \fancyhf{}
@@ -53,16 +54,40 @@ variables:
         \fancyhead[R]{\thepage}
       }
     - |
-      % Quitar título automático de índice
+      % Remove the automatic table of contents title
       \makeatletter
       \renewcommand{\tableofcontents}{\@starttoc{toc}}
       \makeatother
     - |
+      % Force level-4 (\paragraph) and level-5 (\subparagraph) headings onto their own line
+      \makeatletter
+      \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+        {-2.5ex\@plus -1ex \@minus -.25ex}%
+        {1.25ex \@plus .2ex}%
+        {\normalfont\normalsize\bfseries}}
+      \renewcommand\subparagraph{\@startsection{subparagraph}{5}{\z@}%
+        {-2.0ex\@plus -1ex \@minus -.25ex}%
+        {1.0ex \@plus .2ex}%
+        {\normalfont\normalsize\bfseries}}
+      \makeatother
+    - |
+      \usepackage{booktabs}
       \usepackage{tabularx}
       \usepackage{multirow}
       \usepackage{array}
+      % Commands to auto-center header titles in LaTeX tables
+      \newcommand{\thfirst}[1]{\multicolumn{1}{|c|}{\textbf{#1}}}
+      \newcommand{\thcell}[1]{\multicolumn{1}{c|}{\textbf{#1}}}
+      \newcommand{\thc}[1]{\multicolumn{1}{c}{\textbf{#1}}}
+      % Macros for column-spanning headers (colspan) with automatic centering and bold
+      \newcommand{\thspan}[2]{\multicolumn{#1}{c|}{\textbf{#2}}}
+      \newcommand{\thspanfirst}[2]{\multicolumn{#1}{|c|}{\textbf{#2}}}
+      % Uniform table horizontal rules (booktabs: toprule, midrule, and bottomrule at the same thickness)
+      \AtBeginDocument{
+        \setlength{\heavyrulewidth}{\lightrulewidth}
+      }
     - |
-      % Configuración de APA 7 para Tablas y Figuras
+      % APA 7 caption setup for tables and figures
       \usepackage{caption}
       \captionsetup{
         labelsep=newline,
@@ -74,12 +99,12 @@ variables:
       }
       \captionsetup[table]{position=top}
       \captionsetup[figure]{position=top}
-      
-      % Forzar el título de las figuras en la parte superior
+
+      % Force figure captions to the top (APA 7)
       \floatstyle{plaintop}
       \restylefloat{figure}
-      
-      % Renombrar 'Cuadro' a 'Tabla'
+
+      % Rename 'Cuadro' to 'Tabla' (Spanish babel defaults to Cuadro)
       \AtBeginDocument{
         \renewcommand{\tablename}{Tabla}
         \renewcommand{\listtablename}{Índice de tablas}
@@ -87,6 +112,9 @@ variables:
 
 filters:
   - pandoc-crossref
+  - citeproc
+  - pandoc/filters/table-headers-autocenter.lua
+  - pandoc/filters/table-row-lines.lua
 
 bibliography:
   - report/bibliography/references.bib
