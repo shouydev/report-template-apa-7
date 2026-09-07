@@ -1,134 +1,176 @@
-# Guía de Tablas y Figuras - Normas APA 7
+# Guidelines for tables and figures - APA 7
 
-El proyecto está configurado para automatizar la numeración, el formato de los títulos y el índice de Tablas y Figuras siguiendo la norma APA 7. Al momento de generar el PDF, las tablas y figuras compartirán una secuencia numérica universal (Tabla 1, Tabla 2, etc.), sin importar si fueron escritas en Markdown o en LaTeX.
+This project is configured to automate numbering, title formatting, and the list
+of tables and figures following the APA 7 standard. When generating the PDF,
+tables and figures share a universal numerical sequence (Table 1, Table 2, and
+so on), regardless of whether you write them in Markdown or LaTeX.
 
-Todas obtendrán de forma automática:
+Every item automatically receives:
 
-- El identificador en **Negrita** (ej. **Tabla 1**).
-- Un salto de línea.
-- El título descriptivo en _Cursiva_.
+- The identifier in **bold** (for example, **Table 1**).
+- A line break.
+- The descriptive title in _italics_.
 
-A continuación se detalla cómo debes insertar y referenciar cada elemento en tus archivos Markdown de los capítulos.
+The following sections explain how to insert and reference each element in your
+chapter Markdown files.
 
 ---
 
-## 1. Tablas Simples (Markdown)
+## 1. Simple tables (Markdown)
 
-Úsalas para tablas de datos sencillas. Cumplen estrictamente con APA 7 (alineación de texto y ausencia de líneas verticales internas, las cuales son gestionadas automáticamente por el motor al exportar).
+Use Markdown tables for straightforward data presentations. They comply strictly
+with APA 7 requirements (text alignment and the absence of internal vertical
+lines, which the export engine manages automatically).
 
-### 1.1. Automatización de Encabezados y Líneas Horizontales
+### 1.1. Automated headers and horizontal lines
 
-Gracias a los filtros Lua del proyecto (`pandoc/filters/table-headers-autocenter.lua` y `pandoc/filters/table-row-lines.lua`):
+The project Lua filters (`pandoc/filters/table-headers-autocenter.lua` and
+`pandoc/filters/table-row-lines.lua`) provide automated formatting:
 
-- **Encabezados en Negrita y Centrados Automáticos:** No necesitas escribir `**...**` ni `\centering` en los títulos de las columnas. El motor los centra y formatea en negrita de forma 100% automática.
-- **Alineación Independiente del Cuerpo:** La fila divisoria (`:---`, `:---:`, `---:`) controla exclusivamente la alineación de las celdas de datos del cuerpo, sin afectar el centrado del encabezado.
-- **Líneas Divisorias Congruentes:** Cada fila del cuerpo cuenta con una línea horizontal divisoria con el mismo grosor homogéneo (`\lightrulewidth`).
+- **Automated bold and centered headers:** You don't need to write `**...**` or
+  `\centering` in column titles. The engine centers them and applies bold
+  formatting automatically.
+- **Independent body alignment:** The delimiter row (`:---`, `:---:`, `---:`)
+  controls only the alignment of body data cells without affecting header
+  centering.
+- **Consistent horizontal rules:** Each body row includes a horizontal dividing
+  line with uniform thickness (`\lightrulewidth`).
 
-**Código:**
+**Code:**
 
 ```markdown
-| Columna 1 | Columna 2 | Columna 3 |
-| :-------- | :-------: | --------: |
-| Izquierda | Centrado  |   Derecha |
-| Dato      |   Dato    |      Dato |
+| Column 1 | Column 2 | Column 3 |
+| :------- | :------: | -------: |
+| Left     | Centered |    Right |
+| Data     |   Data   |     Data |
 
-: Título breve pero descriptivo de la tabla {#tbl:mi-tabla-simple}
+: Brief yet descriptive table title {#tbl:my-simple-table}
 
-_Nota._ Utiliza las notas para describir los contenidos de la tabla que no pueden entenderse solo con el título.
+_Note._ Use notes to describe table contents that cannot be understood from the
+title alone.
 ```
 
-_(No le agregues formato de cursiva al título en la línea del caption ni negrita manual a las columnas, el sistema lo hará automáticamente)._
+*(Don't add italic formatting to the title in the caption line or manual bold
+formatting to column headers; the system formats them automatically).*
 
-**Para referenciarla en el texto:**
+**Referencing in text:**
 
-> Como se puede observar en la `@tbl:mi-tabla-simple`, los datos demuestran que...
+> As shown in `@tbl:my-simple-table`, the data demonstrate that...
 
-## 2. Tablas Complejas (LaTeX Puro)
+## 2. Complex tables (pure LaTeX)
 
-Úsalas para tablas como matrices de competidores, matrices de roles, Sprint Backlog o estructuras que requieran unir celdas (rowspan/colspan), líneas verticales y anchos fijos (`p{...}`, `m{...}`, `X`). Por su complejidad, se exonera su diseño interior de la norma APA 7 estricta, pero su título exterior y numeración seguirán el estándar de forma automatizada.
+Use pure LaTeX tables for structures such as competitor matrices, role
+matrices, sprint backlogs, or layouts that require merged cells (rowspan or
+colspan), vertical borders, and fixed column widths (`p{...}`, `m{...}`, `X`).
+Due to their structural complexity, their internal cell design is exempt from
+strict APA 7 rules; however, their outer captions and numbering follow the
+standard automatically.
 
-### 2.1. Optimización para Encabezados (`\thfirst`, `\thcell`, `\thc`, `\thspan`)
+### 2.1. Header optimization (`\thfirst`, `\thcell`, `\thc`, `\thspan`)
 
-En columnas de tipo párrafo o automáticas (`p{...}`, `m{...}` o `X`), LaTeX alinea el texto por defecto a la izquierda. Para evitar escribir manualmente instrucciones largas como `\multicolumn{1}{|c|}{\textbf{...}}` en cada celda del encabezado o en subtítulos combinados, el proyecto incluye macros globales en `pandoc/report.yaml`:
+In paragraph-type or automatic columns (`p{...}`, `m{...}`, or `X`), LaTeX
+aligns text to the left by default. To avoid writing verbose commands like
+`\multicolumn{1}{|c|}{\textbf{...}}` in every header cell or merged subheading,
+the project provides global macros in `pandoc/report.yaml`:
 
-- **`\thfirst{Título}`**: Primera columna de la fila de encabezados. Aplica **centrado horizontal y negrita automática**, conservando el borde vertical izquierdo y derecho (`|c|`).
-- **`\thcell{Título}`**: Columnas siguientes (de la segunda en adelante). Aplica **centrado horizontal y negrita automática**, conservando el borde divisorio vertical (`c|`).
-- **`\thc{Título}`**: Para tablas sin bordes verticales. Aplica **centrado horizontal y negrita automática** sin agregar líneas verticales (`c`).
-- **`\thspan{N}{Título}`**: Para subtítulos o encabezados intermedios que unen $N$ columnas (_colspan_ como «Descripción»). Aplica **centrado horizontal y negrita automática**, manteniendo el borde vertical derecho (`c|`).
-- **`\thspanfirst{N}{Título}`**: Igual que `\thspan`, pero iniciando desde la primera columna (incluye borde izquierdo `|c|`).
+- **`\thfirst{Title}`**: First column of the header row. Applies **horizontal
+  centering and automated bold formatting**, preserving the left and right
+  vertical borders (`|c|`).
+- **`\thcell{Title}`**: Subsequent columns (second column onward). Applies
+  **horizontal centering and automated bold formatting**, preserving the right
+  dividing border (`c|`).
+- **`\thc{Title}`**: Tables without vertical borders. Applies **horizontal
+  centering and automated bold formatting** without vertical lines (`c`).
+- **`\thspan{N}{Title}`**: Subheadings or intermediate headers spanning $N$
+  columns (colspan, such as "Description"). Applies **horizontal centering and
+  automated bold formatting**, preserving the right vertical border (`c|`).
+- **`\thspanfirst{N}{Title}`**: Same as `\thspan`, but starting from the first
+  column (includes the left vertical border `|c|`).
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> La **negrita es 100% automática**: no debes escribir `\textbf{...}` dentro de `\thfirst{...}`, `\thcell{...}`, `\thc{...}` ni `\thspan{...}`. Solo pasa el texto del título y la macro lo formateará en negrita y centrado.
+> Bold formatting is 100% automated: don't write `\textbf{...}` inside
+> `\thfirst{...}`, `\thcell{...}`, `\thc{...}`, or `\thspan{...}`. Pass only the
+> title text, and the macro formats it in bold and centers it.
 
-**Código de ejemplo (con bordes verticales y subtítulo combinado):**
+**Example code (with vertical borders and a merged subheading):**
 
 ```latex
 \begin{table}[htpb]
 \centering
-\caption{Matriz de Perfiles del Equipo de Trabajo}
-\label{tbl:matriz-perfiles-equipo}
+\caption{Team Member Profiles Matrix}
+\label{tbl:team-profiles-matrix}
 \renewcommand{\arraystretch}{1.4}
 \begin{tabularx}{\textwidth}{| m{2.5cm} | X | m{4.5cm} |}
 \hline
-\thfirst{Foto} & \thcell{Nombre} & \thcell{Carrera} \\
+\thfirst{Photo} & \thcell{Name} & \thcell{Major} \\
 \hline
-\multirow{4}{2.5cm}{\centering [Foto]}
-& Nombre del Integrante & Ingeniería de Software \\
+\multirow{4}{2.5cm}{\centering [Photo]}
+& Team Member Name & Software Engineering \\
 \cline{2-3}
-& \thspan{2}{Descripción} \\
+& \thspan{2}{Description} \\
 \cline{2-3}
 & \multicolumn{2}{p{\dimexpr\textwidth-2.5cm-4\tabcolsep-3\arrayrulewidth\relax}|}{%
-    Descripción detallada del perfil profesional del integrante...
+    Detailed description of the member's professional profile...
 } \\
 \hline
 \end{tabularx}
 \end{table}
 
-*Nota.* Matriz elaborada por el equipo para el reporte del proyecto.
+*Note.* Matrix prepared by the team for the project report.
 ```
 
-**Código de ejemplo en `longtable` (multipage):**
+**Example code in `longtable` (multipage):**
 
 ```latex
 \begin{longtable}{|p{4.5cm}|p{6cm}|p{4.5cm}|}
 \hline
-\thfirst{Criterio Específico} & \thcell{Acciones Realizadas} & \thcell{Conclusiones} \\
+\thfirst{Specific Criterion} & \thcell{Actions Taken} & \thcell{Conclusions} \\
 \hline
 \endfirsthead
 
 \hline
-\thfirst{Criterio Específico} & \thcell{Acciones Realizadas} & \thcell{Conclusiones} \\
+\thfirst{Specific Criterion} & \thcell{Actions Taken} & \thcell{Conclusions} \\
 \hline
 \endhead
 
-... filas de contenido ...
+... content rows ...
 \hline
 \end{longtable}
 ```
 
-### 2.2. Directrices para Solicitar Tablas
+### 2.2. Guidelines for requesting tables
 
-Este documento sirve como especificación técnica directa para solicitar tablas LaTeX a cualquier modelo de IA (Antigravity, ChatGPT, Claude, etc.). Cuando le pidas a una IA que genere una tabla en LaTeX para este repositorio, dale la siguiente instrucción:
+This document serves as a technical specification for requesting LaTeX tables
+from AI models (Antigravity, ChatGPT, Claude, and others). When you prompt an AI
+model to generate a LaTeX table for this repository, provide the following
+instruction:
 
-> *"Genera la tabla en código LaTeX para el informe siguiendo las directrices de `docs/guidelines_tables_figures_apa7.md`: usa `tabularx` con ancho `\textwidth`, ajusta el espaciado con `\renewcommand{\arraystretch}{1.4}`, utiliza obligatoriamente las macros `\thfirst{...}` para la primera columna, `\thcell{...}` para las columnas siguientes y `\thspan{N}{...}` para subtítulos de sección combinados (sin agregar `\textbf{}` manual). Incluye `\caption{...}`, `\label{tbl:...}` y la nota al pie con `*Nota._`."_
+> *"Generate the table in LaTeX code for the report following the guidelines in
+> `docs/guidelines_tables_figures_apa7.md`: use `tabularx` with width
+> `\textwidth`, adjust spacing with `\renewcommand{\arraystretch}{1.4}`, and use
+> the mandatory macros `\thfirst{...}` for the first column, `\thcell{...}` for
+> subsequent columns, and `\thspan{N}{...}` for merged section subheadings
+> (without manually adding `\textbf{}`). Include `\caption{...}`,
+> `\label{tbl:...}`, and the footnote with `*Note.*`."*
 
-**Para referenciarla en el texto:**
+**Referencing in text:**
 
-> Evaluando la `Tabla \ref{tbl:matriz-perfiles-equipo}`, podemos concluir que...
+> Evaluating `Table \ref{tbl:team-profiles-matrix}`, we can conclude that...
 
-## 3. Figuras
+## 3. Figures
 
-Por defecto, el sistema centrará todas las imágenes automáticamente e incorporará el título APA 7 (número en negrita, título inferior en cursiva).
+By default, the system centers all images automatically and applies the APA 7
+title format (bold number above, italic title below).
 
-**Código:**
+**Code:**
 
 ```markdown
-![Arquitectura del Sistema de Información](assets/arquitectura.png){#fig:arquitectura-sistema}
+![Information System Architecture](assets/arquitectura.png){#fig:system-architecture}
 
-_Nota._ Explicaciones extras con asteriscos o atribución de derechos de autor de la figura.
+_Note._ Additional explanations or copyright attribution for the figure.
 ```
 
-**Para referenciarla en el texto:**
+**Referencing in text:**
 
-> El diagrama de la `@fig:arquitectura-sistema` detalla el flujo de información.
+> The diagram in `@fig:system-architecture` details the information flow.
