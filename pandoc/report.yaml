@@ -11,12 +11,8 @@ resource-path:
   - report
   - report/assets
 
-metadata:
-  lang: es-ES
-  figureTitle: 'Figura'
-  tableTitle: 'Tabla'
-  figPrefix: 'Figura'
-  tblPrefix: 'Tabla'
+metadata-files:
+  - pandoc/lang/es-ES.yaml
 
 variables:
   graphics: true
@@ -106,8 +102,10 @@ variables:
 
       % Rename 'Cuadro' to 'Tabla' (Spanish babel defaults to Cuadro)
       \AtBeginDocument{
-        \renewcommand{\tablename}{Tabla}
-        \renewcommand{\listtablename}{Índice de tablas}
+        \iflanguage{spanish}{%
+          \renewcommand{\tablename}{Tabla}%
+          \renewcommand{\listtablename}{Índice de tablas}%
+        }{}%
       }
 
 filters:

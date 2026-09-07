@@ -1,0 +1,14 @@
+# Alias for en-US (English)
+lang: en-US
+
+# pandoc-crossref titles and prefixes (APA 7)
+figureTitle: 'Figure'
+tableTitle: 'Table'
+figPrefix: 'Figure'
+tblPrefix: 'Table'
+secPrefix: 'Section'
+eqnPrefix: 'Equation'
+lstPrefix: 'Listing'
+listingTitle: 'Listing'
+lotTitle: 'List of Tables'
+lofTitle: 'List of Figures'

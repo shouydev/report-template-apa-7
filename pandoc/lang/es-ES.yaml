@@ -1,0 +1,14 @@
+# Language and localization metadata for Spanish (es-ES / Latin America)
+lang: es-ES
+
+# pandoc-crossref titles and prefixes (APA 7)
+figureTitle: 'Figura'
+tableTitle: 'Tabla'
+figPrefix: 'Figura'
+tblPrefix: 'Tabla'
+secPrefix: 'Sección'
+eqnPrefix: 'Ecuación'
+lstPrefix: 'Código'
+listingTitle: 'Código'
+lotTitle: 'Índice de tablas'
+lofTitle: 'Índice de figuras'
