@@ -1,19 +1,24 @@
-# IDEs and environments
+# IDEs
 .vscode/
 .idea/
+
+# OS
 .DS_Store
+
+# Agent / tooling
 .github/
 .antigravitycli
 .mimocode/
 .agents/
-
-# Compiled files and temporary files
-build/
-notes/
 AGENTS.md
 CLAUDE.md
+skills-lock.json
 
-# Heavy binary files
+# Local notes and build output
+notes/
+build/
+
+# Heavy binaries
 *.jar
 *.exe
 

@@ -41,8 +41,9 @@ PDF_FILES = $(FRONT_MATTER) $(CHAPTERS) $(BACK_MATTER) $(ANNEXES)
 PDF=$(OUTPUT_DIR)/$(PROJECT_NAME).pdf
 
 # Docker configuration
+DOCKER_PLATFORM ?= --platform linux/amd64
 DOCKER = docker run --rm -v "$(abspath .):/app" -w /app
-PANDOC_DOCKER = docker run --rm -v "$(abspath .):/workspace" -w /workspace pandoc/extra:3.8.3
+PANDOC_DOCKER = docker run $(DOCKER_PLATFORM) --rm -v "$(abspath .):/workspace" -w /workspace pandoc/extra:3.8.3
 
 # C4 Structurizr paths
 C4_WORKSPACE_FILE = report/assets/diagram-sources/c4-diagrams/workspace.dsl
