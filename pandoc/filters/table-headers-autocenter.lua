@@ -11,31 +11,22 @@ local function format_header_cell(cell)
   if first_block.t == 'Plain' or first_block.t == 'Para' then
     local inlines = first_block.content
     local new_inlines = {}
-    local has_centering = false
-    local has_bfseries = false
+    local has_multicol = false
 
     for _, inl in ipairs(inlines) do
-      if inl.t == 'RawInline' then
-        if inl.text:match('\\centering') then
-          has_centering = true
-        end
-        if inl.text:match('\\bfseries') then
-          has_bfseries = true
-        end
+      if inl.t == 'RawInline' and inl.text:match('\\multicolumn') then
+        has_multicol = true
       end
-      table.insert(new_inlines, inl)
     end
 
-    -- Inject \centering and \bfseries at the start of the header if they are not already present
-    if not has_centering and not has_bfseries then
-      table.insert(new_inlines, 1, pandoc.RawInline('latex', '\\centering\\bfseries '))
-    elseif not has_centering then
-      table.insert(new_inlines, 1, pandoc.RawInline('latex', '\\centering '))
-    elseif not has_bfseries then
-      table.insert(new_inlines, 1, pandoc.RawInline('latex', '\\bfseries '))
+    if not has_multicol then
+      table.insert(new_inlines, pandoc.RawInline('latex', '\\multicolumn{1}{c}{\\textbf{'))
+      for _, inl in ipairs(inlines) do
+        table.insert(new_inlines, inl)
+      end
+      table.insert(new_inlines, pandoc.RawInline('latex', '}}'))
+      first_block.content = new_inlines
     end
-
-    first_block.content = new_inlines
   end
 end
 

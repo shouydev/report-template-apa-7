@@ -10,13 +10,12 @@
 .antigravitycli
 .mimocode/
 .agents/
-AGENTS.md
-CLAUDE.md
 skills-lock.json
 
 # Local notes and build output
 notes/
 build/
+.inputs/
 
 # Heavy binaries
 *.jar

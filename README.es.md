@@ -123,13 +123,13 @@ report/
 │   │   └── apa-7.csl                 # Hoja de estilo CSL para citas APA 7
 │   ├── filters/                      # Filtros Lua de formateo automático
 │   │   ├── table-headers-autocenter.lua  # Centrado y negrita en encabezados de tabla
-│   │   └── table-row-lines.lua       # Líneas divisorias horizontales homogéneas
-│   ├── lang/                         # Archivos de localización (i18n)
-│   │   ├── en-US.yaml                # Configuración para Inglés estadounidense
-│   │   ├── en.yaml                   # Alias para Inglés
-│   │   ├── es-ES.yaml                # Configuración para Español estándar
-│   │   └── es.yaml                   # Alias para Español
-│   ├── report.yaml                   # Configuración maestra por defecto de Pandoc
+│   │   └── table-row-lines.lua       # Líneas horizontales continuas entre filas
+│   ├── lang/                         # Metadatos de internacionalización (i18n)
+│   │   ├── en-US.yaml                # Configuración en inglés estadounidense
+│   │   ├── en.yaml                   # Alias para inglés
+│   │   ├── es-ES.yaml                # Configuración en español estándar
+│   │   └── es.yaml                   # Alias para español
+│   ├── report.yaml                   # Archivo maestro de configuración de Pandoc
 │   └── template/
 │       └── eisvogel.tex              # Plantilla LaTeX adaptada al estándar APA 7
 └── report/                            # Contenido del informe modular
@@ -178,7 +178,7 @@ make single-es SRC=report/chapters/10-presentation/11-contexto.md
 make single-en SRC=report/chapters/10-presentation/11-contexto.md
 ```
 
-El resultado se genera en `build/single-output.pdf`.
+El resultado se genera en `build/single.pdf`.
 
 ### Alcance de los Idiomas Soportados
 
@@ -196,10 +196,10 @@ El resultado se genera en `build/single-output.pdf`.
 | `make pdf` | Compila el informe completo con la configuración por defecto de `pandoc/report.yaml`. |
 | `make pdf-es` | Compila el informe completo forzando el idioma español (`es-ES`). |
 | `make pdf-en` | Compila el informe completo forzando el idioma inglés estadounidense (`en-US`). |
-| `make single SRC=<ruta>` | Compila un único archivo Markdown a `build/single-output.pdf` usando `report.yaml`. |
+| `make single SRC=<ruta>` | Compila un único archivo Markdown a `build/single.pdf` usando `report.yaml`. |
 | `make single-es SRC=<ruta>` | Compila un único archivo Markdown forzando el idioma español (`es-ES`). |
 | `make single-en SRC=<ruta>` | Compila un único archivo Markdown forzando el idioma inglés (`en-US`). |
-| `make diagrams` | Genera imágenes PNG a partir de los diagramas de clases PlantUML. |
+| `make class-diagrams` | Genera imágenes PNG a partir de los diagramas de clases PlantUML (alias: `make diagrams`). |
 | `make db-diagrams` | Genera imágenes PNG a partir de los diagramas relacionales PlantUML. |
 | `make c4` | Exporta el modelo Structurizr C4 DSL a PlantUML y compila los diagramas PNG. |
 | `make all` | Genera todos los diagramas y compila el informe PDF completo. |
@@ -240,9 +240,50 @@ Para referenciarla en el texto:
 Como se describe en la @tbl:evaluacion-calidad, los resultados confirman...
 ```
 
-#### Tablas Complejas (LaTeX Puro)
+#### Tablas Complejas y Multipágina (LaTeX Puro)
 
-Para tablas que requieran combinación de celdas (`colspan` / `rowspan`), bordes verticales o anchos fijos, usa el entorno `tabularx` con las macros de cabecera del proyecto:
+Para tablas que requieran combinación de celdas (`colspan` / `rowspan`), bordes
+verticales o anchos fijos, se permite el uso de entornos LaTeX nativos.
+
+Se **recomienda utilizar `longtable`** debido a su naturaleza flexible y soporte
+multipágina:
+
+- **Salto de página automático:** La tabla se divide fluidamente a través de
+  múltiples páginas sin desbordar los márgenes verticales ni cortarse.
+- **Encabezados repetitivos:** Repite de forma automática la fila de títulos en
+  cada nueva página mediante `\endfirsthead` y `\endhead`.
+- **Alineación APA 7 preconfigurada:** Configurada en `pandoc/report.yaml` para
+  cumplir con la alineación a la izquierda (*flush-left*) de la leyenda
+  `\caption` y el ancho total del texto.
+
+**Recomendado: Tabla multipágina con `longtable`:**
+
+```latex
+\begin{longtable}{|p{4.5cm}|p{6cm}|p{4.5cm}|}
+\caption{Matriz de Criterios de Evaluación y Resultados}\label{tbl:matriz-evaluacion} \\
+\hline
+\thfirst{Criterio Específico} & \thcell{Acciones Realizadas} & \thcell{Conclusiones} \\
+\hline
+\endfirsthead
+
+\hline
+\thfirst{Criterio Específico} & \thcell{Acciones Realizadas} & \thcell{Conclusiones} \\
+\hline
+\endhead
+
+Criterio 1: Usabilidad & Evaluación de tiempos de respuesta & Aprobado con SLA óptimo \\
+\hline
+Criterio 2: Escalabilidad & Pruebas de estrés hasta 5k RPS & Resiliente con 0 fallos \\
+\hline
+\end{longtable}
+
+*Note.* Matriz elaborada por los autores del proyecto.
+```
+
+**Matriz de página única con `tabularx`:**
+
+Para tablas de una sola página que requieran cálculo automático de anchos de
+columna proporcionales con `X`, puedes usar `tabularx`:
 
 ```latex
 \begin{table}[htpb]
@@ -316,10 +357,13 @@ Al final del documento, la lista de referencias se compilará con el formato de 
 El proyecto integra flujos automatizados de arquitectura como código:
 
 1. **C4 Model con Structurizr:** Modela el sistema en `report/assets/diagram-sources/c4-diagrams/workspace.dsl`. Ejecuta `make c4` para exportar a PlantUML y renderizar los archivos PNG en `report/assets/c4-diagrams/`.
-2. **Diagramas de Clases:** Añade tus archivos `.puml` en `report/assets/diagram-sources/class-diagrams/` y ejecuta `make diagrams`.
+2. **Diagramas de Clases:** Añade tus archivos `.puml` en `report/assets/diagram-sources/class-diagrams/` y ejecuta `make class-diagrams`.
 3. **Diagramas de Base de Datos:** Añade tus archivos `.puml` en `report/assets/diagram-sources/database-diagrams/` y ejecuta `make db-diagrams`.
 
-Para previsualización interactiva en tiempo real de los diagramas C4 en tu navegador mediante Structurizr Lite, consulta [report/assets/diagram-sources/c4-diagrams/c4-guidelines.md](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md).
+Para consultar las guías detalladas y métodos de previsualización en tiempo real:
+- **Modelo de Arquitectura C4:** [c4-guidelines.md](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md)
+- **Diagramas de Clases:** [class-diagrams-guidelines.md](report/assets/diagram-sources/class-diagrams/class-diagrams-guidelines.md)
+- **Diagramas de Base de Datos:** [db-diagrams-guidelines.md](report/assets/diagram-sources/database-diagrams/db-diagrams-guidelines.md)
 
 ---
 
@@ -327,6 +371,8 @@ Para previsualización interactiva en tiempo real de los diagramas C4 en tu nave
 
 - [Guía de Tablas y Figuras APA 7](docs/guidelines_tables_figures_apa7.md): Guía de referencia técnica para tablas Markdown, tablas complejas LaTeX y figuras.
 - [Guía de Arquitectura C4](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md): Estructura modular del modelo Structurizr DSL y servidor local en Docker.
+- [Guía de Diagramas de Clases](report/assets/diagram-sources/class-diagrams/class-diagrams-guidelines.md): Estándares de diseño de clases orientado a objetos y configuración en PlantUML.
+- [Guía de Diagramas de Base de Datos](report/assets/diagram-sources/database-diagrams/db-diagrams-guidelines.md): Modelado entidad-relación y diseño relacional con notación de pata de gallo.
 
 ---
 
@@ -334,4 +380,6 @@ Para previsualización interactiva en tiempo real de los diagramas C4 en tu nave
 
 Este proyecto se distribuye bajo la [Licencia MIT](LICENSE).
 
-Eres completamente libre de clonar este repositorio, modificar su estructura, agregar soporte para nuevos idiomas o dialectos y personalizar la plantilla según los estándares y normativas académicas que tu institución o proyecto requieran.
+Eres completamente libre de clonar este repositorio, modificar su estructura,
+agregar soporte para nuevos idiomas o dialectos y personalizar la plantilla según
+los estándares y normativas académicas que tu institución o proyecto requieran.

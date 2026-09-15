@@ -236,10 +236,10 @@ Output is generated at `build/single-output.pdf`.
 | `make pdf` | Compiles the full report using default settings from `pandoc/report.yaml`. |
 | `make pdf-es` | Compiles the full report forcing Spanish localization (`es-ES`). |
 | `make pdf-en` | Compiles the full report forcing US English localization (`en-US`). |
-| `make single SRC=<path>` | Previews a single Markdown file at `build/single-output.pdf` using `report.yaml`. |
+| `make single SRC=<path>` | Previews a single Markdown file at `build/single.pdf` using `report.yaml`. |
 | `make single-es SRC=<path>` | Previews a single Markdown file forcing Spanish localization (`es-ES`). |
 | `make single-en SRC=<path>` | Previews a single Markdown file forcing US English localization (`en-US`). |
-| `make diagrams` | Generates PNG images from PlantUML class diagrams. |
+| `make class-diagrams` | Generates PNG images from PlantUML class diagrams (alias: `make diagrams`). |
 | `make db-diagrams` | Generates PNG images from PlantUML database diagrams. |
 | `make c4` | Exports the Structurizr C4 DSL model to PlantUML and renders PNG diagrams. |
 | `make all` | Builds all diagrams and compiles the complete report PDF. |
@@ -284,11 +284,48 @@ Reference the table in your text with:
 As presented in @tbl:quality-evaluation, the results indicate...
 ```
 
-#### Complex tables (pure LaTeX)
+#### Complex and multipage tables (pure LaTeX)
 
 For tables requiring merged cells (`colspan` / `rowspan`), vertical rules, or
-fixed column widths, use `tabularx` with the global macros provided by the
-project:
+fixed column widths, pure LaTeX environments are supported.
+
+We **recommend using `longtable`** due to its flexible, multipage nature:
+
+- **Automatic page breaks:** Tables seamlessly split across page boundaries
+  without overflowing page margins or getting clipped.
+- **Repeating headers:** Headers automatically repeat on subsequent pages using
+  `\endfirsthead` and `\endhead`.
+- **Preconfigured APA 7 formatting:** Configured in `pandoc/report.yaml` to
+  enforce APA 7 flush-left caption alignment and full text-width coverage.
+
+**Recommended: Multipage table with `longtable`:**
+
+```latex
+\begin{longtable}{|p{4.5cm}|p{6cm}|p{4.5cm}|}
+\caption{Evaluation Criteria and Results Matrix}\label{tbl:evaluation-matrix} \\
+\hline
+\thfirst{Specific Criterion} & \thcell{Actions Taken} & \thcell{Conclusions} \\
+\hline
+\endfirsthead
+
+\hline
+\thfirst{Specific Criterion} & \thcell{Actions Taken} & \thcell{Conclusions} \\
+\hline
+\endhead
+
+Criterion 1: Usability & Evaluated user response time & Passed with optimal SLA \\
+\hline
+Criterion 2: Scalability & Executed load tests up to 5k RPS & Resilient with zero errors \\
+\hline
+\end{longtable}
+
+*Note.* Matrix prepared by the project authors.
+```
+
+**Single-page matrix with `tabularx`:**
+
+For strictly single-page tables that require automatic column width calculation
+with `X`, you can use `tabularx`:
 
 ```latex
 \begin{table}[htpb]
@@ -371,12 +408,14 @@ code:
    `report/assets/diagram-sources/c4-diagrams/workspace.dsl`. Run `make c4` to
    export to PlantUML and render PNGs in `report/assets/c4-diagrams/`.
 2. **Class diagrams:** Place `.puml` files in
-   `report/assets/diagram-sources/class-diagrams/` and run `make diagrams`.
+   `report/assets/diagram-sources/class-diagrams/` and run `make class-diagrams`.
 3. **Database diagrams:** Place `.puml` files in
    `report/assets/diagram-sources/database-diagrams/` and run `make db-diagrams`.
 
-For live interactive preview in your browser using Structurizr Lite, see
-[report/assets/diagram-sources/c4-diagrams/c4-guidelines.md](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md).
+For detailed guidelines and live preview instructions:
+- **C4 Architecture Model:** [c4-guidelines.md](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md)
+- **Class Diagrams:** [class-diagrams-guidelines.md](report/assets/diagram-sources/class-diagrams/class-diagrams-guidelines.md)
+- **Database Diagrams:** [db-diagrams-guidelines.md](report/assets/diagram-sources/database-diagrams/db-diagrams-guidelines.md)
 
 ---
 
@@ -386,6 +425,10 @@ For live interactive preview in your browser using Structurizr Lite, see
   Technical specification for Markdown tables, complex LaTeX tables, and figures.
 - [C4 architecture guide](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md):
   Modular DSL file structure and local Docker preview server.
+- [Class diagrams guide](report/assets/diagram-sources/class-diagrams/class-diagrams-guidelines.md):
+  Object-oriented class modeling standards and PlantUML configuration.
+- [Database diagrams guide](report/assets/diagram-sources/database-diagrams/db-diagrams-guidelines.md):
+  Relational data modeling and Crow's Foot ERD notation.
 
 ---
 
