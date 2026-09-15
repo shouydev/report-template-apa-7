@@ -96,6 +96,15 @@ variables:
       \captionsetup[table]{position=top}
       \captionsetup[figure]{position=top}
 
+      % Longtable caption left-alignment and width setup (APA 7 flush-left)
+      \captionsetup[longtable]{
+        width=\textwidth,
+        justification=raggedright,
+        singlelinecheck=false
+      }
+      \setlength{\LTleft}{0pt}
+      \setlength{\LTright}{\fill}
+
       % Force figure captions to the top (APA 7)
       \floatstyle{plaintop}
       \restylefloat{figure}
