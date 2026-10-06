@@ -89,6 +89,8 @@ variables:
         labelsep=newline,
         justification=raggedright,
         singlelinecheck=false,
+        format=plain,
+        indention=0pt,
         textfont={it, color=black},
         labelfont={bf, color=black},
         skip=10pt
@@ -100,7 +102,9 @@ variables:
       \captionsetup[longtable]{
         width=\textwidth,
         justification=raggedright,
-        singlelinecheck=false
+        singlelinecheck=false,
+        format=plain,
+        indention=0pt
       }
       \setlength{\LTleft}{0pt}
       \setlength{\LTright}{\fill}
