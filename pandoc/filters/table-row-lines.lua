@@ -44,3 +44,25 @@ function Table(tbl)
 
   return tbl
 end
+
+-- Ensure APA 7 table and figure notes (_Nota._ / _Note._) are flush-left without paragraph indent
+function Para(el)
+  if not FORMAT:match('latex') then
+    return el
+  end
+
+  local first = el.content[1]
+  if first and first.t == 'RawInline' and first.text:match('\\noindent') then
+    return el
+  end
+
+  if first and first.t == 'Emph' and #first.content > 0 then
+    local inner = first.content[1]
+    if inner and inner.t == 'Str' and (inner.text:match('^Nota[.:]?$') or inner.text:match('^Note[.:]?$')) then
+      table.insert(el.content, 1, pandoc.RawInline('latex', '\\noindent '))
+      return el
+    end
+  end
+
+  return el
+end

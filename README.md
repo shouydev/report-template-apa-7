@@ -142,8 +142,8 @@ report/
 ├── README.es.md                       # Spanish documentation (Anexo en español)
 ├── LICENSE                            # MIT open-source license
 ├── docs/                              # Supplementary technical documentation
-│   ├── guidelines_tables_figures_apa7.md  # Detailed APA 7 tables and figures guide
-│   └── project-statement.md           # Project statement document
+│   ├── project-statement.md           # Project statement document
+│   └── tables-figures-apa-7-guidelines.md # Detailed APA 7 tables and figures guide
 ├── pandoc/                            # Pandoc and LaTeX generation engine
 │   ├── csl/
 │   │   └── apa-7.csl                 # APA 7 citation style sheet
@@ -275,7 +275,7 @@ lengths:
 
 : Summary of quality evaluation metrics {#tbl:quality-evaluation}
 
-_Note._ Data collected during load and stress testing phases.
+\noindent _Note._ Data collected during load and stress testing phases.
 ```
 
 Reference the table in your text with:
@@ -284,12 +284,21 @@ Reference the table in your text with:
 As presented in @tbl:quality-evaluation, the results indicate...
 ```
 
-#### Complex and multipage tables (pure LaTeX)
+#### Complex and wide tables (pure LaTeX `longtable`)
 
-For tables requiring merged cells (`colspan` / `rowspan`), vertical rules, or
-fixed column widths, pure LaTeX environments are supported.
+For standard tables (regular rows and columns without merged cells, up to 5
+columns), **always use Markdown tables**.
 
-We **recommend using `longtable`** due to its flexible, multipage nature:
+Pure LaTeX tables are permitted **only** in two specific scenarios:
+
+1. **Complex layouts:** Tables requiring merged cells (`colspan` / `rowspan`),
+   hierarchical subheadings, or custom vertical divider lines.
+2. **Wide tables (> 5 columns):** Standard tables with more than 5 columns where
+   exact column width control (`p{...}`) is required to prevent overflow.
+
+**Strict requirement:** You must use **only `longtable`**. Floating environments
+(`\begin{table}`) and standalone `\begin{tabularx}` are strictly prohibited to
+prevent unexpected page jumps and alignment issues.
 
 - **Automatic page breaks:** Tables seamlessly split across page boundaries
   without overflowing page margins or getting clipped.
@@ -298,7 +307,7 @@ We **recommend using `longtable`** due to its flexible, multipage nature:
 - **Preconfigured APA 7 formatting:** Configured in `pandoc/report.yaml` to
   enforce APA 7 flush-left caption alignment and full text-width coverage.
 
-**Recommended: Multipage table with `longtable`:**
+**Multipage table with `longtable`:**
 
 ```latex
 \begin{longtable}{|p{4.5cm}|p{6cm}|p{4.5cm}|}
@@ -319,40 +328,15 @@ Criterion 2: Scalability & Executed load tests up to 5k RPS & Resilient with zer
 \hline
 \end{longtable}
 
-*Note.* Matrix prepared by the project authors.
-```
-
-**Single-page matrix with `tabularx`:**
-
-For strictly single-page tables that require automatic column width calculation
-with `X`, you can use `tabularx`:
-
-```latex
-\begin{table}[htpb]
-\centering
-\caption{Team Member Profiles Matrix}
-\label{tbl:team-profiles}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{| m{2.5cm} | X | m{4.5cm} |}
-\hline
-\thfirst{Photo} & \thcell{Name} & \thcell{Role} \\
-\hline
-\multirow{2}{2.5cm}{\centering [Photo]}
-& John Doe & Lead Software Architect \\
-\cline{2-3}
-& \thspan{2}{Responsible for backend architecture and observability.} \\
-\hline
-\end{tabularx}
-\end{table}
-
-*Note.* Created by the project team.
+\noindent *Note.* SLA = service-level agreement; RPS = requests per second.
 ```
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> For the complete list of macros (`\thfirst`, `\thcell`, `\thc`, `\thspan`)
-> and prompting instructions for AI assistants, see
-> [docs/guidelines_tables_figures_apa7.md](docs/guidelines_tables_figures_apa7.md).
+> For the complete table decision matrix, macro list (`\thfirst`, `\thcell`,
+> `\thc`, `\thspan`), guidance on avoiding title/note indentation, and prompting
+> instructions for AI models, see
+> [docs/tables-figures-apa-7-guidelines.md](docs/tables-figures-apa-7-guidelines.md).
 
 ---
 
@@ -363,7 +347,7 @@ Markdown images are centered automatically and receive APA 7 caption formatting:
 ```markdown
 ![System Containers Diagram](report/assets/c4-diagrams/container-diagram.png){#fig:containers}
 
-_Note._ Adapted from the solution architecture C4 model.
+\noindent _Note._ Adapted from the solution architecture C4 model.
 ```
 
 Reference the figure in your text with:
@@ -421,7 +405,7 @@ For detailed guidelines and live preview instructions:
 
 ## Additional documentation
 
-- [APA 7 tables and figures guide](docs/guidelines_tables_figures_apa7.md):
+- [APA 7 tables and figures guide](docs/tables-figures-apa-7-guidelines.md):
   Technical specification for Markdown tables, complex LaTeX tables, and figures.
 - [C4 architecture guide](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md):
   Modular DSL file structure and local Docker preview server.

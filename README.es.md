@@ -116,8 +116,8 @@ report/
 ├── README.es.md                       # Documentación en español
 ├── LICENSE                            # Licencia de código abierto MIT
 ├── docs/                              # Guías técnicas complementarias
-│   ├── guidelines_tables_figures_apa7.md  # Guía de tablas y figuras APA 7
-│   └── project-statement.md           # Declaración del proyecto
+│   ├── project-statement.md           # Declaración del proyecto
+│   └── tables-figures-apa-7-guidelines.md # Guía de tablas y figuras APA 7
 ├── pandoc/                            # Configuración del motor de generación PDF
 │   ├── csl/
 │   │   └── apa-7.csl                 # Hoja de estilo CSL para citas APA 7
@@ -231,7 +231,7 @@ Para tablas de datos convencionales. Para que la tabla se expanda ocupando todo 
 
 : Resumen de evaluación de calidad {#tbl:evaluacion-calidad}
 
-_Nota._ Datos obtenidos en la fase de pruebas de estrés.
+\noindent _Nota._ Datos obtenidos en la fase de pruebas de estrés.
 ```
 
 Para referenciarla en el texto:
@@ -240,13 +240,22 @@ Para referenciarla en el texto:
 Como se describe en la @tbl:evaluacion-calidad, los resultados confirman...
 ```
 
-#### Tablas Complejas y Multipágina (LaTeX Puro)
+#### Tablas Complejas y Extensas (LaTeX Puro con `longtable`)
 
-Para tablas que requieran combinación de celdas (`colspan` / `rowspan`), bordes
-verticales o anchos fijos, se permite el uso de entornos LaTeX nativos.
+Para tablas normales (filas y columnas regulares sin celdas combinadas, de hasta
+5 columnas), **debes usar obligatoriamente tablas Markdown**.
 
-Se **recomienda utilizar `longtable`** debido a su naturaleza flexible y soporte
-multipágina:
+El uso de tablas en LaTeX puro se reserva **exclusivamente** para dos situaciones:
+
+1. **Estructuras complejas:** Tablas que requieran celdas combinadas (`colspan` /
+   `rowspan`), jerarquías o bordes divisores verticales.
+2. **Tablas anchas (> 5 columnas):** Tablas estándar de más de 5 columnas donde
+   se requiere calibrar anchos fijos de columna (`p{...}`) para un ajuste visual
+   preciso que evite desbordamientos.
+
+**Regla estricta:** Solo se permite el uso del entorno `longtable`. Los entornos
+flotantes (`\begin{table}`) y `tabularx` flotante están prohibidos para evitar
+saltos inesperados de página y desalineaciones de títulos.
 
 - **Salto de página automático:** La tabla se divide fluidamente a través de
   múltiples páginas sin desbordar los márgenes verticales ni cortarse.
@@ -256,7 +265,7 @@ multipágina:
   cumplir con la alineación a la izquierda (*flush-left*) de la leyenda
   `\caption` y el ancho total del texto.
 
-**Recomendado: Tabla multipágina con `longtable`:**
+**Tabla multipágina con `longtable`:**
 
 ```latex
 \begin{longtable}{|p{4.5cm}|p{6cm}|p{4.5cm}|}
@@ -277,37 +286,15 @@ Criterio 2: Escalabilidad & Pruebas de estrés hasta 5k RPS & Resiliente con 0 f
 \hline
 \end{longtable}
 
-*Note.* Matriz elaborada por los autores del proyecto.
+\noindent *Nota.* SLA = acuerdo de nivel de servicio; RPS = peticiones por segundo.
 ```
 
-**Matriz de página única con `tabularx`:**
-
-Para tablas de una sola página que requieran cálculo automático de anchos de
-columna proporcionales con `X`, puedes usar `tabularx`:
-
-```latex
-\begin{table}[htpb]
-\centering
-\caption{Matriz de Perfiles del Equipo de Trabajo}
-\label{tbl:perfiles-equipo}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{| m{2.5cm} | X | m{4.5cm} |}
-\hline
-\thfirst{Foto} & \thcell{Nombre} & \thcell{Especialidad} \\
-\hline
-\multirow{2}{2.5cm}{\centering [Foto]}
-& Juan Pérez & Arquitectura de Software \\
-\cline{2-3}
-& \thspan{2}{Responsable técnico del diseño del backend y observabilidad.} \\
-\hline
-\end{tabularx}
-\end{table}
-
-*Nota.* Elaboración propia.
-```
-
+<!-- prettier-ignore -->
 > [!NOTE]
-> Para conocer todas las macros disponibles (`\thfirst`, `\thcell`, `\thc`, `\thspan`) y directrices para solicitar tablas a modelos de IA, revisa [docs/guidelines_tables_figures_apa7.md](docs/guidelines_tables_figures_apa7.md).
+> Para consultar la matriz de decisión de tablas, macros disponibles (`\thfirst`,
+> `\thcell`, `\thc`, `\thspan`), prevención de sangrías accidentales y directrices
+> para solicitar tablas a modelos de IA, revisa
+> [docs/tables-figures-apa-7-guidelines.md](docs/tables-figures-apa-7-guidelines.md).
 
 ---
 
@@ -318,7 +305,7 @@ Las imágenes en Markdown se centran de forma automática y adoptan la rotulaci�
 ```markdown
 ![Diagrama de Contenedores del Sistema](report/assets/c4-diagrams/container-diagram.png){#fig:contenedores}
 
-_Nota._ Vista adaptada del modelo de arquitectura de solución C4.
+\noindent _Nota._ Vista adaptada del modelo de arquitectura de solución C4.
 ```
 
 Para referenciarla en el texto:
@@ -369,7 +356,7 @@ Para consultar las guías detalladas y métodos de previsualización en tiempo r
 
 ## Documentación Adicional
 
-- [Guía de Tablas y Figuras APA 7](docs/guidelines_tables_figures_apa7.md): Guía de referencia técnica para tablas Markdown, tablas complejas LaTeX y figuras.
+- [Guía de Tablas y Figuras APA 7](docs/tables-figures-apa-7-guidelines.md): Guía de referencia técnica para tablas Markdown, tablas complejas LaTeX y figuras.
 - [Guía de Arquitectura C4](report/assets/diagram-sources/c4-diagrams/c4-guidelines.md): Estructura modular del modelo Structurizr DSL y servidor local en Docker.
 - [Guía de Diagramas de Clases](report/assets/diagram-sources/class-diagrams/class-diagrams-guidelines.md): Estándares de diseño de clases orientado a objetos y configuración en PlantUML.
 - [Guía de Diagramas de Base de Datos](report/assets/diagram-sources/database-diagrams/db-diagrams-guidelines.md): Modelado entidad-relación y diseño relacional con notación de pata de gallo.
