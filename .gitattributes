@@ -1,2 +1,2 @@
-# Ensure shell scripts always keep LF endings across all platforms
-*.sh text eol=lf
+# Normalize all text files to LF on every platform
+* text=auto eol=lf
